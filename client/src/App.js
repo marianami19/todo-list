@@ -1,46 +1,69 @@
 import './App.css';
-<<<<<<< HEAD
-import Form from './Home';
+import React, { useState } from "react";
+
+
+const Input = (props) => {
+  return  <li className="list-group-item d-flex justify-content-between align-items-center">
+  {props.name}
+  <button className="btn-close" type="button" aria-label="Close"></button>
+</li>;
+};
+
 
 function App() {
-    state = {
-    numChildren: 0
-  }
-  const children = [];
-  for (var i = 0; i < this.state.numChildren; i += 1) {
-    children.push(<ListItem key={i} number={i} />);
-  };
 
-  onAddChild = () => {
-    this.setState({
-      numChildren: this.state.numChildren + 1
-    });
-  }
+    const [listItem, setItem] = useState([]);
+    const [name, setName] = useState('');
+    const handleSubmit= async e => {
+      e.preventDefault();
 
-  return (
+      try {
+        const body = {name};
+        await fetch("http://localhost:5000/addTodo",{
+              method: "POST",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify(body)
+      })
+      setItem(listItem.concat(<Input key={listItem.length} name={name}/>));
 
-   <Form></Form>
-=======
 
-function App() {
+      }catch(err) {
+        console.log(err)
+      }
+    }
   return (
     <div className="App">
+      
       <div className="container my-5 d-grid gap-5">
           <header className="App-header fs-2">
             To Do List App
           </header>
+          <form onSubmit={e => { handleSubmit(e) }}>
+         
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="inputGroup-sizing-default">Enter the Task</span>
             </div>
-            <input type="text" className="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" />
+            <input 
+            className="form-control"
+          name='name' 
+          type='text' 
+          value={name}
+          onChange={e => setName(e.target.value)}
+          placeholder="Enter Task"
+        />
+          
             <div className="input-group-append">
-              <button className="btn btn-outline-secondary" type="button">Add Task</button>
+              <button className="btn btn-outline-secondary" type="submit">Add Task</button>
             </div>
           </div>
 
+        </form>
+
+
           <ul className="list-group">
-            <li className="list-group-item d-flex justify-content-between align-items-center">
+          {listItem}
+            {/* <li className="list-group-item d-flex justify-content-between align-items-center">
               A list item
               <button className="btn-close" type="button" aria-label="Close"></button>
             </li>
@@ -51,11 +74,10 @@ function App() {
             <li className="list-group-item d-flex justify-content-between align-items-center">
               A third list item
               <button className="btn-close" type="button" aria-label="Close"></button>
-            </li>
+            </li> */}
           </ul>
         </div>
     </div>
->>>>>>> 0666aa64467528b0865062d898231c169de9edd1
   );
 }
 
