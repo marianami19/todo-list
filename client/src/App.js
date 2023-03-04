@@ -1,7 +1,7 @@
 import "./App.css";
 import React, { useState, useEffect }  from "react";
 
-const Input = (props) => {
+const Tasks = (props) => {
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
       {props.name}
@@ -13,28 +13,22 @@ const Input = (props) => {
 function App() {
   const [listItem, setItem] = useState([]);
   const [name, setName] = useState("");
-  var todoList = [];
   const getAllToDos = async() => {
     try {
-       // GET request using fetch inside useEffect React hook
        fetch('http://localhost:5000/allTodos')
        .then(response => response.json)
        .then( data => console.log(data))
        //   data.array.forEach(element => {
        //   setItem(listItem.concat(<Input key={element.key} name={element.name} />))
        // })
-   console.log('todo', todoList)
   } catch (err) {
     console.log(err);
   }
 }
 
-// const [totalReactPackages, setTotalReactPackages] = useState(null);
 
 useEffect(() => {
-  console.log('sdsdsdsa')
   getAllToDos()
-// empty dependency array means this effect will only run once (like componentDidMount in classes)
 }, []);
 
   const handleSubmit = async (e) => {
@@ -48,7 +42,7 @@ useEffect(() => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      setItem(listItem.concat(<Input key={key} name={name} />));
+      setItem(listItem.concat(<Tasks key={key} name={name} />));
     } catch (err) {
       console.log(err);
     }
@@ -87,18 +81,6 @@ useEffect(() => {
 
         <ul className="list-group">
           {listItem}
-          {/* <li className="list-group-item d-flex justify-content-between align-items-center">
-              A list item
-              <button className="btn-close" type="button" aria-label="Close"></button>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center">
-              A second list item
-              <button className="btn-close" type="button" aria-label="Close"></button>
-            </li>
-            <li className="list-group-item d-flex justify-content-between align-items-center">
-              A third list item
-              <button className="btn-close" type="button" aria-label="Close"></button>
-            </li> */}
         </ul>
       </div>
     </div>
