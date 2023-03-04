@@ -26,7 +26,7 @@ app.get("/allTodos", async (req, res) => {
   try {
     const students = await storage.values();
     console.log(students);
-    res.send(students);
+    res.json(students);
   } catch (err) {
     console.log(err);
   }
