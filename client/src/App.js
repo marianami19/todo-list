@@ -16,7 +16,7 @@ function App() {
   const getAllToDos = async() => {
     try {
        fetch('http://localhost:5000/allTodos')
-       .then(response => response.json)
+       .then(response => response.json())
        .then( data => console.log(data))
        //   data.array.forEach(element => {
        //   setItem(listItem.concat(<Input key={element.key} name={element.name} />))
