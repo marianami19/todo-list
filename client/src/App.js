@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect }  from "react";
 
 const Input = (props) => {
   return (
@@ -13,6 +13,30 @@ const Input = (props) => {
 function App() {
   const [listItem, setItem] = useState([]);
   const [name, setName] = useState("");
+  var todoList = [];
+  const getAllToDos = async() => {
+    try {
+       // GET request using fetch inside useEffect React hook
+       fetch('http://localhost:5000/allTodos')
+       .then(response => response.json)
+       .then( data => console.log(data))
+       //   data.array.forEach(element => {
+       //   setItem(listItem.concat(<Input key={element.key} name={element.name} />))
+       // })
+   console.log('todo', todoList)
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// const [totalReactPackages, setTotalReactPackages] = useState(null);
+
+useEffect(() => {
+  console.log('sdsdsdsa')
+  getAllToDos()
+// empty dependency array means this effect will only run once (like componentDidMount in classes)
+}, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

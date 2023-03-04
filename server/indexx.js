@@ -13,29 +13,20 @@ app.use(cors());
 app.post("/addTodo", jsonParser, async (req, res) => {
   try {
     const todo = req.body;
-    console.log(todo);
-    //checks if student_id is unique
-    await storage.setItem(await req.body["key"], todo);
-    const students = await storage.values();
-    console.log("dd", students);
+    await storage.setItem(`${req.body["key"]}`, todo);
+    console.log("dd", await storage.values() );
     res.send("Added student");
   } catch (err) {
-    res.send(err);
+    console.log(err);
   }
 });
 
 // retrieves all students sorting by student id
-app.get("/allStudents", async (req, res) => {
+app.get("/allTodos", async (req, res) => {
   try {
     const students = await storage.values();
-    students.sort(
-      (a, b) => parseFloat(a.student_id) - parseFloat(b.student_id)
-    );
-    let html = "<h2>All student data!</h2><hr>";
-    students.forEach((student) => {
-      html += ` <div> <h3>ID: ${student.student_id}</h1> <h3>Name: ${student.student_name}</h1> <h3>GPA: ${student.student_gpa}</h1> <hr> </div> `;
-    });
-    res.send(html);
+    console.log(students);
+    res.send(students);
   } catch (err) {
     console.log(err);
   }
