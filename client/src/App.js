@@ -28,20 +28,21 @@ function App() {
         (result) => {
           setData(result);
           setKey(result.length)
-          console.log('result',data);
+    displayTodos(result)
+
+          console.log('result',result);
         },
         (error) => {
           setError(error);
           console.log(error);
         }
       )
-    displayTodos()
   }
 
-  const displayTodos = () => {
+  const displayTodos = (data) => {
     setItem([]);
     if (!!data) {
-      data.sort((element) => element.key);
+      // data.sort((element) => element.key);
 
       data.forEach(element => {
         console.log('data element --', element)

@@ -14,7 +14,7 @@ app.post("/addTodo", jsonParser, async (req, res) => {
   try {
     const todo = req.body;
     await storage.setItem(`${req.body["key"]}`, todo);
-    console.log("dd", await storage.values() );
+    console.log("post", await storage.values() );
     res.send("Added student");
   } catch (err) {
     console.log(err);
@@ -25,7 +25,7 @@ app.post("/addTodo", jsonParser, async (req, res) => {
 app.get("/allTodos", async (req, res) => {
   try {
     const students = await storage.values();
-    console.log(students);
+    console.log('get',students);
     res.json(students);
   } catch (err) {
     console.log(err);
