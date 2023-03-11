@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState, useEffect }  from "react";
+import React, { useState, useEffect } from "react";
 
 const Tasks = (props) => {
   return (
@@ -13,40 +13,64 @@ const Tasks = (props) => {
 function App() {
   const [listItem, setItem] = useState([]);
   const [name, setName] = useState("");
-  const getAllToDos = async() => {
-    try {
-       fetch('http://localhost:5000/allTodos')
-       .then(response => response.json())
-       .then( data => console.log(data))
-       //   data.array.forEach(element => {
-       //   setItem(listItem.concat(<Input key={element.key} name={element.name} />))
-       // })
-  } catch (err) {
-    console.log(err);
+  const [key, setKey] = useState();
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getAllToDos();
+  }, [])
+
+  const getAllToDos = async () => {
+    await fetch(`http://localhost:5000/allTodos`)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          setData(result);
+          setKey(result.length)
+          console.log('result',data);
+        },
+        (error) => {
+          setError(error);
+          console.log(error);
+        }
+      )
+    displayTodos()
   }
-}
 
+  const displayTodos = () => {
+    setItem([]);
+    if (!!data) {
+      data.sort((element) => element.key);
 
-useEffect(() => {
-  getAllToDos()
-}, []);
+      data.forEach(element => {
+        console.log('data element --', element)
+        setItem(items => [...items, <Tasks key={element.key} name={element.name} />])
+      });
+    }
 
+    console.log('key = ', key)
+    console.log('data', data)
+
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      let key = listItem.length;
       const body = { name, key };
       await fetch("http://localhost:5000/addTodo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify(body)
       });
-      setItem(listItem.concat(<Tasks key={key} name={name} />));
+      getAllToDos();
+      //  setItem(items => [...items, <Tasks key={element.key} name={element.name} />])
     } catch (err) {
       console.log(err);
     }
+    setName('');
+
   };
+
   return (
     <div className="App">
       <div className="container my-5 d-grid gap-5">
@@ -69,6 +93,7 @@ useEffect(() => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter Task"
+              required
             />
 
             <div className="input-group-append">
