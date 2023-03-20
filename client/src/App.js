@@ -3,9 +3,9 @@ import React, { useState, useEffect } from "react";
 
 const Tasks = (props) => {
   return (
-    <li className="list-group-item d-flex justify-content-between align-items-center">
+    <li className="list-group-item w-50 m-auto my-2">
       {props.name}
-      <button className="btn-close" type="button" aria-label="Close"></button>
+      {/* <button className="btn-close" type="button" aria-label="Close"></button> */}
     </li>
   );
 };
@@ -14,8 +14,6 @@ function App() {
   const [listItem, setItem] = useState([]);
   const [name, setName] = useState("");
   const [key, setKey] = useState();
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     getAllToDos();
@@ -26,14 +24,14 @@ function App() {
       .then(res => res.json())
       .then(
         (result) => {
-          setData(result);
+          // setData(result);
           setKey(result.length)
-    displayTodos(result)
+          displayTodos(result)
 
-          console.log('result',result);
+          console.log('result', result);
         },
         (error) => {
-          setError(error);
+          // setError(error);
           console.log(error);
         }
       )
@@ -74,8 +72,8 @@ function App() {
 
   return (
     <div className="App">
-      <div className="container my-5 d-grid gap-5">
-        <header className="App-header fs-2">To Do List App</header>
+      <div className="  container my-5 d-grid gap-5">
+        <header className="display-3 text-light">To do Today</header>
         <form
           onSubmit={(e) => {
             handleSubmit(e);
@@ -93,7 +91,7 @@ function App() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter Task"
+              placeholder="Buy groceries..."
               required
             />
 

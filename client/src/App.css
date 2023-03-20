@@ -1,3 +1,7 @@
 .App {
   text-align: center;
 }
+
+.list-group-item:hover {
+  background-color: #fff6f654;
+}

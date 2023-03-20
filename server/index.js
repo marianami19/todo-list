@@ -3,11 +3,16 @@ var app = express();
 const storage = require("node-persist");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
-storage.init();
-
-//cors
 const cors = require("cors");
 app.use(cors());
+
+const clear = async () => {
+  await storage.init();
+  await storage.clear();
+}
+
+clear();
+
 
 // adds student
 app.post("/addTodo", jsonParser, async (req, res) => {
@@ -25,7 +30,7 @@ app.post("/addTodo", jsonParser, async (req, res) => {
 app.get("/allTodos", async (req, res) => {
   try {
     const students = await storage.values();
-    console.log('get',students);
+    console.log('get',students.sort((a,b) => b.key - a.key));
     res.json(students);
   } catch (err) {
     console.log(err);
