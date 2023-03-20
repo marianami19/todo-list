@@ -18,7 +18,7 @@ function App() {
 
   useEffect(() => {
     getAllToDos();
-  }, [])
+  })
 
   // retrieves todos from backend, sets unique key for next todo
   const getAllToDos = async () => {
