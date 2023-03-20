@@ -1,15 +1,16 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
 
+// Code for each todo
 const Tasks = (props) => {
   return (
     <li className="list-group-item w-50 m-auto my-2">
       {props.name}
-      {/* <button className="btn-close" type="button" aria-label="Close"></button> */}
     </li>
   );
 };
 
+// main code
 function App() {
   const [listItem, setItem] = useState([]);
   const [name, setName] = useState("");
@@ -19,39 +20,33 @@ function App() {
     getAllToDos();
   }, [])
 
+  // retrieves todos from backend, sets unique key for next todo
   const getAllToDos = async () => {
     await fetch(`http://localhost:5000/allTodos`)
       .then(res => res.json())
       .then(
         (result) => {
-          // setData(result);
           setKey(result.length)
+          //display function called with data retrieved as parameter
           displayTodos(result)
-
-          console.log('result', result);
         },
         (error) => {
-          // setError(error);
           console.log(error);
         }
       )
   }
 
+  // loops through the data and sets listItem which is an array of the tasks in html
   const displayTodos = (data) => {
     setItem([]);
     if (!!data) {
-      // data.sort((element) => element.key);
-
       data.forEach(element => {
-        console.log('data element --', element)
         setItem(items => [...items, <Tasks key={element.key} name={element.name} />])
       });
     }
-
-    console.log('key = ', key)
-    console.log('data', data)
-
   }
+
+  // adds a new todo with name and key
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -62,12 +57,10 @@ function App() {
         body: JSON.stringify(body)
       });
       getAllToDos();
-      //  setItem(items => [...items, <Tasks key={element.key} name={element.name} />])
     } catch (err) {
       console.log(err);
     }
     setName('');
-
   };
 
   return (
@@ -102,7 +95,6 @@ function App() {
             </div>
           </div>
         </form>
-
         <ul className="list-group">
           {listItem}
         </ul>

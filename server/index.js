@@ -6,32 +6,32 @@ var jsonParser = bodyParser.json();
 const cors = require("cors");
 app.use(cors());
 
-const clear = async () => {
+// initialize and empty storage 
+const clearStorage = async () => {
   await storage.init();
   await storage.clear();
 }
 
-clear();
+clearStorage();
 
 
-// adds student
+// adds todo - name with unique key to node persist
 app.post("/addTodo", jsonParser, async (req, res) => {
   try {
     const todo = req.body;
     await storage.setItem(`${req.body["key"]}`, todo);
-    console.log("post", await storage.values() );
-    res.send("Added student");
+    res.send("Added!");
   } catch (err) {
     console.log(err);
   }
 });
 
-// retrieves all students sorting by student id
+// retrieves all todos sorting by todo key descending
 app.get("/allTodos", async (req, res) => {
   try {
-    const students = await storage.values();
-    console.log('get',students.sort((a,b) => b.key - a.key));
-    res.json(students);
+    const todos = await storage.values();
+    todos.sort((a,b) => b.key - a.key);
+    res.json(todos);
   } catch (err) {
     console.log(err);
   }
