@@ -1,42 +1,81 @@
-var express = require("express");
-var app = express();
-const storage = require("node-persist");
+const mysql = require('mysql');
+//cors
+const cors = require('cors');
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
-const cors = require("cors");
+//express
+var express = require('express');
+var app = express();
+var corsOptions = {
+    origin: "http://localhost:5000"
+};
+
 app.use(cors());
-
-// initialize and empty storage 
-const clearStorage = async () => {
-  await storage.init();
-  await storage.clear();
-}
-
-clearStorage();
+const conn = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    database: "todolist"
+})
 
 
-// adds todo - name with unique key to node persist
-app.post("/addTodo", jsonParser, async (req, res) => {
-  try {
-    const todo = req.body;
-    await storage.setItem(`${req.body["key"]}`, todo);
-    res.send("Added!");
-  } catch (err) {
-    console.log(err);
-  }
-});
+
+// conn.query("create table todos(todoid int NOT NULL AUTO_INCREMENT, todoname varchar(255), PRIMARY KEY(todoid))")
 
 // retrieves all todos sorting by todo key descending
-app.get("/allTodos", async (req, res) => {
-  try {
-    const todos = await storage.values();
-    todos.sort((a,b) => b.key - a.key);
-    res.json(todos);
-  } catch (err) {
-    console.log(err);
-  }
+conn.connect(function (err) {
+    if (err) {
+        throw err;
+    }
+    console.log("Connected")
+})
+
+var todos;
+
+app.get('/allTodos', function (req, res) {
+    try {
+        conn.query("select * from todos", function (err, result) {
+            if (err) {
+                console.log(err);
+            }
+            res.send(result)
+
+        })
+    } catch (err) {
+        console.log(err);
+    }
+})
+
+app.post("/addTodo", jsonParser, async (req, res) => {
+    try {
+        const todo = req.body;
+        console.log('todo', todo)
+        conn.query(`insert into todos(todoname, todoid) values('${todo.name}', ${todo.key})`)
+
+    } catch (err) {
+        console.log(err);
+    }
 });
 
+
+// app.post('/addTodo', function (req, res) {
+//     console.log('add ',req.body)
+// conn.query("select * from todos", function (err, res, fields) {
+//     if (err) {
+//         console.log(err)
+//     }
+// })
+
+// conn.query(`insert into todos(todoname) values("cook")`)
+
+//  res.status('Hello World', res)
+// conn.close();
+// })
+// app.post('/addTodo', function (req, res) {
+//     console.log('add ',req.body)
+//     // conn.query(`insert into todos(todoname) values("cook")`)
+//     // res.send('Added')
+// })
+
 app.listen(5000, () => {
-  console.log("Server Started");
-});
+    console.log("Server Started!");
+})

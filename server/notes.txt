@@ -1,43 +1,42 @@
-const mysql = require('mysql');
-//cors
-const cors = require('cors');
-//express
-var express = require('express');
+var express = require("express");
 var app = express();
-
+const storage = require("node-persist");
+var bodyParser = require("body-parser");
+var jsonParser = bodyParser.json();
+const cors = require("cors");
 app.use(cors());
-const conn = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "todolist"
-})
 
-conn.connect(function (err) {
-    if (err) {
-        throw err;
-    }
-    console.log("Connected")
-})
+// initialize and empty storage 
+const clearStorage = async () => {
+  await storage.init();
+  await storage.clear();
+}
 
-// conn.query("create table todos(todoid int NOT NULL AUTO_INCREMENT, todoname varchar(255), PRIMARY KEY(todoid))")
+clearStorage();
 
-app.get('/retrieveAllToDos', function (req, res) {
 
-    conn.query("select * from todos", function (err, res, fields) {
-        if (err) {
-            console.log(err)
-        }
-    })
-    
+// adds todo - name with unique key to node persist
+app.post("/addTodo", jsonParser, async (req, res) => {
+  try {
+    const todo = req.body;
+    await storage.setItem(`${req.body["key"]}`, todo);
+    res.send("Added!");
+  } catch (err) {
+    console.log(err);
+  }
+});
 
-    res.send('Hello World', res)
-    conn.close();
-})
-app.get('/addToDo', function (req, res) {
-    conn.query(`insert into todos(todoname) values("cook")`)
-    res.send('Added')
-})
+// retrieves all todos sorting by todo key descending
+app.get("/allTodos", async (req, res) => {
+  try {
+    const todos = await storage.values();
+    todos.sort((a,b) => b.key - a.key);
+    res.json(todos);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 app.listen(5000, () => {
-    console.log("Server Started!");
-})
+  console.log("Server Started");
+});

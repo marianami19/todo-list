@@ -18,7 +18,7 @@ function App() {
 
   useEffect(() => {
     getAllToDos();
-  })
+  }, [])
 
   // retrieves todos from backend, sets unique key for next todo
   const getAllToDos = async () => {
@@ -26,14 +26,16 @@ function App() {
       .then(res => res.json())
       .then(
         (result) => {
+          console.log('result frontend',result)
           setKey(result.length)
           //display function called with data retrieved as parameter
           displayTodos(result)
         },
         (error) => {
-          console.log(error);
+          console.log('hre>',error);
         }
       )
+    console.log('jere', key)
   }
 
   // loops through the data and sets listItem which is an array of the tasks in html
@@ -41,7 +43,7 @@ function App() {
     setItem([]);
     if (!!data) {
       data.forEach(element => {
-        setItem(items => [...items, <Tasks key={element.key} name={element.name} />])
+        setItem(items => [...items, <Tasks key={element.todoid} name={element.todoname} />])
       });
     }
   }
@@ -51,6 +53,7 @@ function App() {
     e.preventDefault();
     try {
       const body = { name, key };
+      console.log('--', body )
       await fetch("http://localhost:5000/addTodo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
