@@ -45,6 +45,23 @@ app.get('/allTodos', function (req, res) {
     }
 })
 
+
+app.delete('/deleteTodo/:id', function (req, res, next) {
+    try {
+        var id = req.params.id;
+        var sql = `DELETE FROM todos WHERE todoid = ${id}`;
+        console.log("Sql", sql)
+        conn.query(sql, [id], function (err, data) {
+            if (err) throw err;
+            console.log(data.affectedRows + " record(s) updated");
+            res.send(data);
+        });
+    } catch (err) {
+        console.log(err);
+    }
+
+});
+
 app.post("/addTodo", jsonParser, async (req, res) => {
     try {
         const todo = req.body;

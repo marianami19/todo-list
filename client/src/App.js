@@ -1,12 +1,31 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 
 // Code for each todo
 const Tasks = (props) => {
+  const deleteTodo = async (key) => {
+    console.log("props.key", key)
+
+    // if(!!key) {
+    try {
+      fetch('http://localhost:5000/deleteTodo/' + key, {
+        method: 'DELETE',
+      })
+        .then(res => res.json()) // or res.text()
+        .then(res => console.log(res))
+    } catch (err) {
+      console.log(err);
+    }
+    // }
+  }
+
   return (
-    <li className="list-group-item w-50 m-auto my-2">
-      {props.name}
-    </li>
+    <Fragment>
+      <li className="list-group-item w-50 m-auto my-2 d-flex ">
+        <div>{props.name}</div>
+        <button type="button" className="btn-close ms-auto" onClick={() => deleteTodo(props.index)} aria-label="Close"></button>
+      </li>
+    </Fragment>
   );
 };
 
@@ -26,24 +45,26 @@ function App() {
       .then(res => res.json())
       .then(
         (result) => {
-          console.log('result frontend',result)
-          setKey(result.length)
+          console.log('result frontend', result)
+          let maxKey = Math.max(...result.map(o => o.todoid), 1);
+          // set the key of next element
+          setKey(maxKey + 1)
           //display function called with data retrieved as parameter
           displayTodos(result)
         },
         (error) => {
-          console.log('hre>',error);
+          console.log('ERR', error);
         }
       )
-    console.log('jere', key)
+    console.log('KEY', key)
   }
-
+ 
   // loops through the data and sets listItem which is an array of the tasks in html
   const displayTodos = (data) => {
     setItem([]);
     if (!!data) {
       data.forEach(element => {
-        setItem(items => [...items, <Tasks key={element.todoid} name={element.todoname} />])
+        setItem(items => [...items, <Tasks key={element.todoid} index={element.todoid} name={element.todoname} />])
       });
     }
   }
@@ -53,7 +74,7 @@ function App() {
     e.preventDefault();
     try {
       const body = { name, key };
-      console.log('--', body )
+      console.log('--', body)
       await fetch("http://localhost:5000/addTodo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
