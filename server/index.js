@@ -6,9 +6,6 @@ var jsonParser = bodyParser.json();
 //express
 var express = require('express');
 var app = express();
-var corsOptions = {
-    origin: "http://localhost:5000"
-};
 
 app.use(cors());
 const conn = mysql.createConnection({
@@ -17,11 +14,8 @@ const conn = mysql.createConnection({
     database: "todolist"
 })
 
+// conn.query("create table todos(todoid int NOT NULL, todoname varchar(255), PRIMARY KEY(todoid))")
 
-
-// conn.query("create table todos(todoid int NOT NULL AUTO_INCREMENT, todoname varchar(255), PRIMARY KEY(todoid))")
-
-// retrieves all todos sorting by todo key descending
 conn.connect(function (err) {
     if (err) {
         throw err;
@@ -29,8 +23,7 @@ conn.connect(function (err) {
     console.log("Connected")
 })
 
-var todos;
-
+// retrieves all todos order by todo id descending
 app.get('/allTodos', function (req, res) {
     try {
         conn.query("select * from todos ORDER BY todoid DESC;", function (err, result) {
@@ -38,19 +31,17 @@ app.get('/allTodos', function (req, res) {
                 console.log(err);
             }
             res.send(result)
-
         })
     } catch (err) {
         console.log(err);
     }
 })
 
-
+//deletes todo with id
 app.delete('/deleteTodo/:id', function (req, res, next) {
     try {
         var id = req.params.id;
         var sql = `DELETE FROM todos WHERE todoid = ${id}`;
-        console.log("Sql", sql)
         conn.query(sql, [id], function (err, data) {
             if (err) throw err;
             console.log(data.affectedRows + " record(s) updated");
@@ -62,10 +53,10 @@ app.delete('/deleteTodo/:id', function (req, res, next) {
 
 });
 
+//adds new todo
 app.post("/addTodo", jsonParser, async (req, res) => {
     try {
         const todo = req.body;
-        console.log('todo', todo)
         conn.query(`insert into todos(todoname, todoid) values('${todo.name}', ${todo.key})`)
 
     } catch (err) {

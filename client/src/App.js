@@ -1,24 +1,21 @@
 import "./App.css";
 import React, { useState, useEffect, Fragment, useCallback } from "react";
 
-// Code for each todo
+// Code for each todo list item, returns html to App(), accepts name and key as parameters
 const Tasks = (props) => {
-  const deleteTodo = async (key) => {
-    console.log("props.key", key)
 
-    // if(!!key) {
+  // function triggered on click of cross button and deletes the todo item based on key(id)
+  const deleteTodo = async (key) => {
     try {
       fetch('http://localhost:5000/deleteTodo/' + key, {
         method: 'DELETE',
       })
-        .then(res => res.json()) // or res.text()
-        .then(res => console.log('ress', res))
+        .then(res => res.json()) 
+        .then(res => console.log('res', res))
     } catch (err) {
       console.log(err);
     }
-    // }
   }
-
   return (
     <Fragment>
       <li className="list-group-item w-50 m-auto my-2 d-flex ">
@@ -37,7 +34,6 @@ function App() {
 
 
   // retrieves todos from backend, sets unique key for next todo
-
   const getAllToDos = useCallback(async () => {
     await fetch(`http://localhost:5000/allTodos`)
       .then(res => res.json())
@@ -78,7 +74,6 @@ function App() {
 
   // adds a new todo with name and key
   const handleSubmit = async (e) => {
-    // e.preventDefault();
     try {
       const body = { name, key };
       console.log('--', body)
@@ -87,7 +82,6 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
       }).then(
-
         getAllToDos()
       )
     } catch (err) {
