@@ -33,7 +33,7 @@ var todos;
 
 app.get('/allTodos', function (req, res) {
     try {
-        conn.query("select * from todos", function (err, result) {
+        conn.query("select * from todos ORDER BY todoid DESC;", function (err, result) {
             if (err) {
                 console.log(err);
             }
@@ -72,26 +72,6 @@ app.post("/addTodo", jsonParser, async (req, res) => {
         console.log(err);
     }
 });
-
-
-// app.post('/addTodo', function (req, res) {
-//     console.log('add ',req.body)
-// conn.query("select * from todos", function (err, res, fields) {
-//     if (err) {
-//         console.log(err)
-//     }
-// })
-
-// conn.query(`insert into todos(todoname) values("cook")`)
-
-//  res.status('Hello World', res)
-// conn.close();
-// })
-// app.post('/addTodo', function (req, res) {
-//     console.log('add ',req.body)
-//     // conn.query(`insert into todos(todoname) values("cook")`)
-//     // res.send('Added')
-// })
 
 app.listen(5000, () => {
     console.log("Server Started!");

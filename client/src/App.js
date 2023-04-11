@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, Fragment, useCallback } from "react";
 
 // Code for each todo
 const Tasks = (props) => {
@@ -12,7 +12,7 @@ const Tasks = (props) => {
         method: 'DELETE',
       })
         .then(res => res.json()) // or res.text()
-        .then(res => console.log(res))
+        .then(res => console.log('ress', res))
     } catch (err) {
       console.log(err);
     }
@@ -35,30 +35,37 @@ function App() {
   const [name, setName] = useState("");
   const [key, setKey] = useState();
 
-  useEffect(() => {
-    getAllToDos();
-  }, [])
 
   // retrieves todos from backend, sets unique key for next todo
-  const getAllToDos = async () => {
+
+  const getAllToDos = useCallback(async () => {
     await fetch(`http://localhost:5000/allTodos`)
       .then(res => res.json())
       .then(
         (result) => {
-          console.log('result frontend', result)
+          console.log('result frontend', result);
           let maxKey = Math.max(...result.map(o => o.todoid), 1);
           // set the key of next element
-          setKey(maxKey + 1)
+          setKey(maxKey + 1);
           //display function called with data retrieved as parameter
-          displayTodos(result)
+          displayTodos(result);
         },
         (error) => {
-          console.log('ERR', error);
+          console.log('error', error);
         }
-      )
-    console.log('KEY', key)
-  }
- 
+      );
+  }, [])
+
+
+
+  useEffect(
+    () => {
+      getAllToDos();
+    },
+    [listItem, getAllToDos]
+  )
+
+
   // loops through the data and sets listItem which is an array of the tasks in html
   const displayTodos = (data) => {
     setItem([]);
@@ -71,7 +78,7 @@ function App() {
 
   // adds a new todo with name and key
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     try {
       const body = { name, key };
       console.log('--', body)
@@ -79,12 +86,13 @@ function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
-      });
-      getAllToDos();
+      }).then(
+
+        getAllToDos()
+      )
     } catch (err) {
       console.log(err);
     }
-    setName('');
   };
 
   return (
